@@ -1,5 +1,7 @@
 const express = require('express');
 const cors = require('cors');
+//?conectar a la base de datos 1/3
+const { dbConnection } = require('../database/config');
 
 class Server {
 	constructor() {
@@ -9,6 +11,9 @@ class Server {
 		//!recogemos las rutas de la app
 		this.usuariosPath = '/api/usuarios';
 
+		//? 2/3 conectar a la base de datos
+		this.conectarDB();
+
 		//!Middlewares
 
 		this.middlewares();
@@ -16,12 +21,16 @@ class Server {
 		//!rutas de mi aplicación
 		this.routes();
 	}
+	//? 3/3 conectar a la base de datos
+	async conectarDB() {
+		await dbConnection();
+	}
 
 	//use es la clave para decir que es un middleware
 	middlewares() {
-		//CORS
+		//*CORS
 		this.app.use(cors());
-		//lectura y parseo del body--peticiones post
+		//*lectura y parseo del body--peticiones post
 
 		this.app.use(express.json());
 		//*directorio público
@@ -29,7 +38,7 @@ class Server {
 	}
 
 	routes() {
-		this.app.use(this.usuariosPath, require('./routes/usuarios'));
+		this.app.use(this.usuariosPath, require('../routes/usuarios'));
 	}
 
 	listen() {
