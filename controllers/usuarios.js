@@ -48,14 +48,25 @@ const usuariosPost = async (req, res = response) => {
 	});
 };
 
-const usuariosPut = (req, res = response) => {
+const usuariosPut = async (req, res = response) => {
 	const { id } = req.params;
-	//extraigo la info que no necesito
-	const { password, google, ...resto } = req.body;
+	//extraigo la info que voy a utilizar Desestructuración +rest
+	const { _id, password, google, correo, ...resto } = req.body;
 
+	//todo validar contra base de datos
+
+	if (password) {
+		//encriptar contraseña
+		const salt = bcryptjs.genSaltSync();
+		resto.password = bcryptjs.hashSync(password, salt);
+	}
+
+	const usuario = await Usuario.findByIdAndUpdate(id, resto);
+
+	//la respuesta de postman
 	res.json({
 		msg: 'get API-put',
-		id,
+		usuario,
 	});
 };
 
